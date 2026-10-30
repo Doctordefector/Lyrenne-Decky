@@ -38,7 +38,9 @@ It works the same from Desktop Mode.
 The plugin isn't in the Decky store yet. To install it by hand:
 
 1. Turn on Decky's Developer mode.
-2. Under Developer, use **Install plugin from URL** and paste the link to `Lyrenne.zip` from this repo's releases. Decky downloads the Deck build of Lyrenne along with it.
+2. Under Developer, use **Install plugin from URL** and paste the link to **`Lyrenne.zip`** from [the latest release](https://github.com/Doctordefector/Lyrenne-Decky/releases/latest).
+
+Only `Lyrenne.zip` is needed. Once it's installed, Decky downloads the `lyrenne-deck-*.tar.gz` from the same release (the Lyrenne app itself) on its own. The "Source code" files are something GitHub adds to every release.
 
 ## Developing
 
@@ -53,7 +55,7 @@ DECK=deck@<deck-ip> scripts/deploy.sh            # build, pack, install through 
 
 ## Releasing
 
-`lyrenne-version` names the Lyrenne release to build from. Bump `package.json`'s version, push a `vX.Y.Z` tag, and CI drafts a release with the trimmed Lyrenne (`scripts/trim-lyrenne.py`) and a `Lyrenne.zip` already pointing Decky at it.
+`lyrenne-version` names the Lyrenne release to build from. Bump `package.json`'s version, push a `vX.Y.Z` tag, and CI drafts a release with the trimmed Lyrenne (`scripts/trim-lyrenne.py`) and a `Lyrenne.zip` already pointing Decky at it. Then commit the `remote_binary` entry from the released zip's `package.json`: the Decky store builds from the repo, not from the release.
 
 ## License
 

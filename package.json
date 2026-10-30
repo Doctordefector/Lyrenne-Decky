@@ -47,5 +47,12 @@
         "react-dom"
       ]
     }
-  }
+  },
+  "remote_binary": [
+    {
+      "name": "lyrenne-deck-2.20.0.tar.gz",
+      "url": "https://github.com/Doctordefector/Lyrenne-Decky/releases/download/v0.1.0/lyrenne-deck-2.20.0.tar.gz",
+      "sha256hash": "f775ba6fd1f65caca8f7d27c49625b41fa627ce7cca5cad5b1d127577831ee40"
+    }
+  ]
 }
