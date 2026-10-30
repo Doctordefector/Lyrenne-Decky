@@ -1,0 +1,45 @@
+name: release
+
+# Push a tag vX.Y.Z matching package.json's version. Builds a DRAFT release holding:
+# - lyrenne-deck-<lyrenne version>.tar.gz: Lyrenne's Linux build (the version in lyrenne-version)
+#   with the windowed app's UI libraries trimmed out, see scripts/trim-lyrenne.py
+# - Lyrenne.zip: the plugin, whose package.json points Decky at that tarball (remote_binary)
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check version
+        run: |
+          V=$(node -p "require('./package.json').version")
+          [ "$GITHUB_REF_NAME" = "v$V" ] || { echo "::error::tag $GITHUB_REF_NAME != package.json $V"; exit 1; }
+      - name: Build the Deck edition of Lyrenne
+        run: |
+          LV=$(tr -d '[:space:]' < lyrenne-version)
+          gh release download "v$LV" --repo Doctordefector/Lyrenne -p "lyrenne-$LV-linux-x86_64.tar.gz" -D upstream
+          mkdir -p out
+          python3 scripts/trim-lyrenne.py "upstream/lyrenne-$LV-linux-x86_64.tar.gz" "out/lyrenne-deck-$LV.tar.gz"
+          NAME="lyrenne-deck-$LV.tar.gz"
+          URL="https://github.com/$GITHUB_REPOSITORY/releases/download/$GITHUB_REF_NAME/$NAME"
+          SHA=$(sha256sum "out/$NAME" | cut -d' ' -f1)
+          node -e "const fs=require('fs');const p=JSON.parse(fs.readFileSync('package.json'));p.remote_binary=[{name:'$NAME',url:'$URL',sha256hash:'$SHA'}];fs.writeFileSync('package.json',JSON.stringify(p,null,2)+'\n')"
+          cat package.json
+      - run: pnpm i --frozen-lockfile && pnpm build
+      - run: python3 scripts/pack.py
+      - name: Draft release
+        run: gh release create "$GITHUB_REF_NAME" out/Lyrenne.zip out/lyrenne-deck-*.tar.gz --draft --title "Lyrenne for Decky $GITHUB_REF_NAME" --notes "Draft."

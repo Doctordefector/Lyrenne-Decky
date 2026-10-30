@@ -1,0 +1,11 @@
+{
+  "name": "Lyrenne",
+  "author": "Doctordefector",
+  "flags": [],
+  "api_version": 1,
+  "publish": {
+    "tags": ["music", "youtube-music", "audio"],
+    "description": "YouTube Music in Game Mode: play, search, browse your library and read synced lyrics while you game. Runs Lyrenne headless in the background.",
+    "image": "https://raw.githubusercontent.com/Doctordefector/Lyrenne/main/docs/images/social-preview.png"
+  }
+}
